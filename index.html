@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard-Istabrak</title>
+
+    <link rel="stylesheet" href="css/library/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/library/all.min.css" />
+    <link rel="stylesheet" href="css/library/normalize.css" />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/master.css" />
+
+    <!-- Get Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Get Font  -->
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.1/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.1/firebase-firestore.js"></script>
+    <script type="module" src="dist/database.js"></script>
+    <script type="module" src="dist/storage.js"></script>
+    <!-- <script src="./index.js"></script> -->
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="text-center fw-bold fs-1 text-uppercase">
+        Istabrak Dashboard
+      </h1>
+
+      <!-- Form to Add/Edit Products -->
+      <form id="product-form" class="d-flex flex-column gap-3">
+        <h3 class="">
+          Products
+          <span class="fs-6" id="products-length">0</span>
+        </h3>
+
+        <input id="productId" type="number" hidden />
+
+        <select
+          id="product-type"
+          class="form-select form-select-lg mb-3 rounded-0 fs-5 p-3"
+          aria-label="Large select example"
+          required
+        >
+          <option value="berjer">Berjer</option>
+          <option value="koltuk">Koltuk</option>
+        </select>
+
+        <div class="input-group mb-3">
+          <input
+            class="w-100 p-2 rounded-0 border border-white-50 p-3 fs-5"
+            id="product-model"
+            type="text"
+            placeholder="Product Model"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <input
+            class="w-100 p-2 rounded-0 border border-white-50 p-3 fs-5"
+            id="product-discrioption"
+            type="text"
+            placeholder="Product Discription"
+            required
+          />
+        </div>
+        <div class="my-3">
+          <input
+            class="form-control p-3 rounded-0"
+            type="file"
+            id="product-choose-image"
+            multiple
+          />
+        </div>
+        <div id="error-messages"></div>
+
+        <div class="btns d-flex align-items gap-3">
+          <button
+            class="btn rounded-0 fs-4 w-75"
+            type="submit"
+            id="submit-form"
+          >
+            Add New Product
+          </button>
+          <button
+            id="delete-all"
+            class="btn btn-outline-danger fs-4 w-25 rounded-0"
+            type="reset"
+          >
+            Delete All
+          </button>
+        </div>
+      </form>
+
+      <!-- List of Current Products -->
+      <div id="productList" class="my-5">
+        <h3>Current Products</h3>
+        <ol id="products-list" class="list-group list-group-numbered"></ol>
+      </div>
+    </div>
+
+    <script src="ts/libs/bootstrap.bundle.min.js"></script>
+    <script src="ts/libs/all.min.js"></script>
+    <script type="module" src="dist/index.js" defer></script>
+  </body>
+</html>

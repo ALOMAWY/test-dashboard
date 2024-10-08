@@ -1,0 +1,28 @@
+:root {
+  --orange: #ac6444;
+  --lower-orange: #ac64441c;
+  --dark: #000;
+  --light: #fff;
+  --alt-light: #f4f4f0;
+  --skyblue: #1bb0ce;
+  --gray: #ffffff4a;
+}
+
+input#picture-name:focus {
+  outline: none;
+}
+
+button[type=submit] {
+  background-color: var(--light);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+button[type=submit]:hover {
+  background-color: var(--orange);
+  color: var(--light);
+  border: 1px solid transparent;
+}
+
+#products-length {
+  color: var(--orange);
+}
