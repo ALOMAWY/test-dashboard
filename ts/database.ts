@@ -19,7 +19,6 @@ export interface Product {
   description: string;
 }
 
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAQmrPfxjnuUA__bkqzZF-gsj4F1JLNoOg",
@@ -36,8 +35,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(firebaseApp);
-
-
 
 let submitForm = document.getElementById("submit-form");
 
@@ -91,7 +88,7 @@ export async function updateDocument(documentId: string, updatedData: Product) {
     submitForm.innerText = "Updated Product";
     setTimeout(() => {
       submitForm.innerText = "Add New Product";
-    }, 5000);
+    }, 1000);
   }
 }
 

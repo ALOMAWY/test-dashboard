@@ -58,7 +58,7 @@ export async function updateDocument(documentId, updatedData) {
         submitForm.innerText = "Updated Product";
         setTimeout(() => {
             submitForm.innerText = "Add New Product";
-        }, 5000);
+        }, 1000);
     }
 }
 // getItemToDb("products", "0223");

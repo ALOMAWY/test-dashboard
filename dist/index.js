@@ -1,5 +1,5 @@
 import { setItemToDb, getItemFromDb, deleteDocument, getAllDocuments, deleteAllDocuments, updateDocument, } from "./database.js";
-import { uploadImageAsInputFileRespownse, deleteImageFromDb, getImageByName, } from "./storage.js";
+import { uploadImageAsInputFileRespownse, getImageByName, } from "./storage.js";
 const form = document.getElementById("product-form");
 const productId = document.getElementById("productId");
 let productsArrayLength;
@@ -46,7 +46,7 @@ function displayProducts(products) {
             productEdit.classList.add("product-update", "btn", "btn-warning");
             productEdit.innerHTML = `<i class="fa-solid fa-pen"></i>`;
             let productRemove = document.createElement("div");
-            productRemove.classList.add("btn", "btn-danger");
+            productRemove.classList.add("delete-product", "btn", "btn-danger");
             productRemove.innerHTML = `<i class="fa-solid fa-trash"></i>`;
             productOptions.appendChild(productEdit);
             productOptions.appendChild(productRemove);
@@ -55,11 +55,6 @@ function displayProducts(products) {
             prodcutImageLabel.classList.add("w-25");
             productItem.appendChild(prodcutImageLabel);
             productsList.appendChild(productItem);
-            productRemove.addEventListener("click", async () => {
-                await deleteDocument(prod.id);
-                deleteImageFromDb(prod.imageName);
-                productItem.remove();
-            });
         });
         if (productCount)
             productCount.innerText = `${products.length}`;
@@ -82,9 +77,28 @@ function clickToEdit() {
                 isUpdateNow = true;
                 if (submitFormButton)
                     submitFormButton.innerText = `Update Product`;
+                getProdcutsAndDisplayIt();
             }
             catch (error) {
                 console.log("error", error);
+            }
+        });
+    });
+}
+function clickToRemove() {
+    document.querySelectorAll(".delete-product").forEach((deleteProd) => {
+        deleteProd.addEventListener("click", async () => {
+            var _a;
+            let productItem = (_a = deleteProd.parentNode) === null || _a === void 0 ? void 0 : _a.parentNode;
+            let currentUpdatingProductId = productItem.getAttribute("product-id") || "";
+            console.log(currentUpdatingProductId);
+            try {
+                await deleteDocument(currentUpdatingProductId);
+                productItem.remove();
+                getProdcutsAndDisplayIt();
+            }
+            catch (error) {
+                console.error("Can't To Remove Product", error);
             }
         });
     });
@@ -129,9 +143,10 @@ async function addProductOnSubmit() {
             await addProduct();
             form.reset();
             if (submitFormButton)
-                submitFormButton.innerText = "Add Product"; // Reset button text after submission
+                submitFormButton.innerText = "Add New Product"; // Reset button text after submission
             submitFormButton.disabled = false;
             clickToEdit();
+            clickToRemove();
         }
         catch (error) {
             console.error("Error adding product:", error);
@@ -142,15 +157,17 @@ async function addProductOnSubmit() {
 }
 async function updateProductOnSubmit(docId) {
     if (validateForm()) {
-        if (submitFormButton)
+        if (submitFormButton) {
             submitFormButton.innerHTML = "...updating";
+            submitFormButton.disabled = true;
+        }
         try {
             if (productImage && productImage.files && productImage.files.length > 0) {
                 let imageFile = productImage.files[0];
-                let uploadImageResponse = await uploadImageAsInputFileRespownse(imageFile);
+                let uploadImageResponse = (await uploadImageAsInputFileRespownse(imageFile));
                 let imageURL = await getImageByName(uploadImageResponse);
                 let updatedProduct = {
-                    id: updatingProductId,
+                    id: docId,
                     type: productType.value,
                     model: productModel.value,
                     description: productDescription.value,
@@ -161,6 +178,7 @@ async function updateProductOnSubmit(docId) {
                 getProdcutsAndDisplayIt();
                 if (submitFormButton)
                     submitFormButton.innerText = "Product Updated";
+                submitFormButton.disabled = false;
                 form.reset();
             }
         }
@@ -213,6 +231,7 @@ async function getProdcutsAndDisplayIt() {
         if (productsArray.length)
             displayProducts(productsArray);
         clickToEdit();
+        clickToRemove();
     }
     catch (error) {
         console.log("No Products In Data Base To Show 😊");

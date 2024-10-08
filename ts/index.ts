@@ -121,7 +121,7 @@ function displayProducts(products: Product[]) {
 
       let productRemove = document.createElement("div");
 
-      productRemove.classList.add("btn", "btn-danger");
+      productRemove.classList.add("delete-product", "btn", "btn-danger");
 
       productRemove.innerHTML = `<i class="fa-solid fa-trash"></i>`;
 
@@ -138,12 +138,6 @@ function displayProducts(products: Product[]) {
       productItem.appendChild(prodcutImageLabel);
 
       productsList.appendChild(productItem);
-
-      productRemove.addEventListener("click", async () => {
-        await deleteDocument(prod.id);
-        deleteImageFromDb(prod.imageName);
-        productItem.remove();
-      });
     });
 
     if (productCount) productCount.innerText = `${products.length}`;
@@ -174,8 +168,30 @@ function clickToEdit() {
         isUpdateNow = true;
 
         if (submitFormButton) submitFormButton.innerText = `Update Product`;
+
+        getProdcutsAndDisplayIt();
       } catch (error) {
         console.log("error", error);
+      }
+    });
+  });
+}
+
+function clickToRemove() {
+  document.querySelectorAll(".delete-product").forEach((deleteProd) => {
+    deleteProd.addEventListener("click", async () => {
+      let productItem = deleteProd.parentNode?.parentNode as HTMLLIElement;
+      let currentUpdatingProductId: string =
+        productItem.getAttribute("product-id") || "";
+
+      console.log(currentUpdatingProductId);
+
+      try {
+        await deleteDocument(currentUpdatingProductId);
+        productItem.remove();
+        getProdcutsAndDisplayIt();
+      } catch (error) {
+        console.error("Can't To Remove Product", error);
       }
     });
   });
@@ -235,9 +251,11 @@ async function addProductOnSubmit() {
     try {
       await addProduct();
       form.reset();
-      if (submitFormButton) submitFormButton.innerText = "Add Product"; // Reset button text after submission
+      if (submitFormButton) submitFormButton.innerText = "Add New Product"; // Reset button text after submission
       submitFormButton.disabled = false;
       clickToEdit();
+
+      clickToRemove();
     } catch (error) {
       console.error("Error adding product:", error);
       if (submitFormButton) submitFormButton.innerText = "Error!";
@@ -247,18 +265,21 @@ async function addProductOnSubmit() {
 
 async function updateProductOnSubmit(docId: string) {
   if (validateForm()) {
-    if (submitFormButton) submitFormButton.innerHTML = "...updating";
+    if (submitFormButton) {
+      submitFormButton.innerHTML = "...updating";
+      submitFormButton.disabled = true;
+    }
 
     try {
       if (productImage && productImage.files && productImage.files.length > 0) {
         let imageFile = productImage.files[0];
-        let uploadImageResponse = await uploadImageAsInputFileRespownse(
+        let uploadImageResponse = (await uploadImageAsInputFileRespownse(
           imageFile
-        );
+        )) as string;
         let imageURL = await getImageByName(uploadImageResponse);
 
         let updatedProduct: Product = {
-          id: updatingProductId,
+          id: docId,
           type: productType.value,
           model: productModel.value,
           description: productDescription.value,
@@ -271,6 +292,8 @@ async function updateProductOnSubmit(docId: string) {
         getProdcutsAndDisplayIt();
 
         if (submitFormButton) submitFormButton.innerText = "Product Updated";
+        submitFormButton.disabled = false;
+
         form.reset();
       }
     } catch (error) {
@@ -329,6 +352,7 @@ async function getProdcutsAndDisplayIt() {
     if (productsArray.length) displayProducts(productsArray);
 
     clickToEdit();
+    clickToRemove();
   } catch (error) {
     console.log("No Products In Data Base To Show 😊");
   }
